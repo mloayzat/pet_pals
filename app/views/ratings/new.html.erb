@@ -1,0 +1,57 @@
+<!-- Validation failure messages -->
+<% if @rating.errors.any? %>
+  <% @rating.errors.full_messages.each do |message| %>
+    <div class="alert alert-dismissable alert-danger">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= message %>
+    </div>
+  <% end %>
+<% end %>
+
+<div class="page-header">
+  <h3>Add Rating</h3>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <form action="/create_rating" method="post">
+      <!-- Hidden input for authenticity token to protect from forgery -->
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+      <!-- Label and input for average_rating -->
+      <label for="category" class="control-label">
+                Score
+              </label>
+
+                <select name="average_rating" id="average_rating" class="form-control" placeholder="Select a rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                
+                  </select>
+              </div>
+
+      <!-- Label and input for content -->
+      <div class="form-group">
+        <label for="content" class="control-label">
+          Content
+        </label>
+
+        <input type="text" id="content" name="content" placeholder="Content" class="form-control" value="<%= @rating.content %>">
+      </div>
+
+      <!-- Label and input for service_id -->
+                <input type="hidden" name="service_id" value="<%= @service.id %>">
+
+                <input type="hidden" name="user_id" value="<%= current_user.id %>">
+
+      <button class="btn btn-success">
+        Create Rating
+      </button>
+      or
+      <a href="/ratings">Cancel</a>
+    </form>
+  </div>
+</div>

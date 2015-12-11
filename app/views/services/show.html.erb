@@ -1,0 +1,285 @@
+<style>
+
+h4 { color: #0000CC  ;
+}
+
+ .starrating{ background-image: url("/assets/images/Star.ico"); 
+              background-position: 2% 73%;
+            background-size: 7%  ;
+            background-repeat: no-repeat;
+                        padding-left: 45px ;
+            padding-top: 35px;
+            padding-bottom: 20px;
+            font-weight: bold;
+            font-size: 22px; 
+
+  }
+
+
+</style>
+
+<div class="page-header">
+  <h3><%= @service.name %></h3> 
+   <div class="starrating" >  
+     <%=@avg %>       
+   </div>
+</div> </div>
+
+
+</div>
+</div>
+</div>
+
+
+<div class="container" >
+ <div class="row">
+  <div class="col-sm-3" class="border">
+<a href="/services/<%=@service.id%>">
+          <img height="900" width="900" src="<%= @service.image %>" class="img-responsive" ></img>
+        </a>
+</div>
+<div class="col-sm-3"><html> 
+<head> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <title>Google Maps Multiple Markers</title> 
+  <script src="http://maps.google.com/maps/api/js?sensor=false" 
+          type="text/javascript"></script>
+</head> 
+<body>
+  <div id="map" style="width: 250px; height: 200px;"></div>
+
+  <script type="text/javascript">
+
+    var locations = [
+     
+
+      ['hola', <%=@latitude%>, <%=@longitude%>],
+  
+    ];
+
+ // Setup the different icons and shadows
+    var iconURLPrefix = 'http://maps.google.com/mapfiles/ms/icons/';
+    
+    var icons = [
+      iconURLPrefix + 'red-dot.png',
+      iconURLPrefix + 'green-dot.png',
+      iconURLPrefix + 'blue-dot.png',
+      iconURLPrefix + 'orange-dot.png',
+      iconURLPrefix + 'purple-dot.png',
+      iconURLPrefix + 'pink-dot.png',      
+      iconURLPrefix + 'yellow-dot.png'
+    ]
+    var iconsLength = icons.length;
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      
+     
+      zoom: 8,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeControl: false,
+      streetViewControl: false,
+      panControl: false,
+      zoomControlOptions: {
+         position: google.maps.ControlPosition.LEFT_BOTTOM
+      }
+    });
+
+   
+    var markers = new Array();
+    
+    var iconCounter = 0;
+    
+    // Add the markers and infowindows to the map
+    for (var i = 0; i < locations.length; i++) {  
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+        map: map,
+        icon: iconURLPrefix + 'yellow-dot.png'  // Add the markers and infowindows to the map yellow to  color 
+      });
+
+      markers.push(marker);
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(locations[i][0]);
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+      
+      iconCounter++;
+      // We only have a limited number of possible icon colors, so we may have to restart the counter
+      if(iconCounter >= iconsLength) {
+        iconCounter = 0;
+      }
+    }
+
+    function autoCenter() {
+      //  Create a new viewpoint bound
+      var bounds = new google.maps.LatLngBounds();
+      //  Go through each...
+      for (var i = 0; i < markers.length; i++) {  
+        bounds.extend(markers[i].position);
+      }
+      //  Fit these bounds to the map
+      map.fitBounds(bounds);
+    }
+    autoCenter();
+  </script></div>
+<div class="col-sm-6">
+
+<div class="col-sm-offset-0 col-sm-12">
+  <i class="fa fa-hand-o-right">  </i> <%= @service.description %><p>
+</div>
+
+<div class="col-sm-offset-0 col-sm-12">
+  <i class="fa fa-flag"> </i> <%= @service.category %><p> </p> 
+</div>
+
+<div class="col-sm-offset-0 col-sm-12">
+  <i class="fa fa-map-pin">  </i> <%= @service.address %><br>
+</div>
+
+<div class="col-sm-offset-0 col-sm-12">
+  <i class="fa fa-phone">   </i> <%= @service.phone %> 
+</div>
+
+
+
+
+</div>
+
+</div>
+
+  
+
+    <dl class="dl-horizontal">
+
+  <div class="small-2 large-4 columns">
+
+
+    </dl>
+
+    <div class="btn-group btn-group-justified">
+      <a href="/services" class="btn btn-primary">
+        Back
+      </a>
+       <% if current_user.id == @service.user_id %>
+        <a href="/services/<%= @service.id %>/edit" class="btn btn-warning">
+          <i class="fa fa-edit"></i>
+        </a>
+        <a href="/delete_service/<%= @service.id %>" class="btn btn-danger" rel="nofollow">
+          <i class="fa fa-trash-o"></i>
+        </a>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="row">
+
+  </div>
+</div>
+
+<p>
+</p>
+
+
+<div class="container" >
+ <div class="row">
+   <div class="col-sm-12">
+  <h4> Reviews </h4>
+    <ul class="media-list">
+      <hr>
+       <%  if @count_of_ratings == 0 %>
+                         <div class="row">
+                      <div class="col-sm-offset-0 col-sm-12">
+                         <hr class="style3">
+                      </div>
+                      
+                  </div>
+                  <div class="row">
+                      <div class="col-sm-offset-0 col-sm-2">
+                          
+                      </div>
+                      <div class="col-sm-offset-0 col-sm-10">
+                          <i class="fa fa-commenting-o"></i> There is no Reviews yet for this place, try it out and let us know how it was   
+                      </div>
+                  </div>   
+                  <hr>  
+
+    <%else%>
+
+          <% @service.ratings.each do |rating| %>
+          
+          <li class="media">
+            <div class="media-body">
+              <h6 class="media-heading">
+              <img height="20" width="20"  src=<%= rating.user.avatar_url %>>
+                <a href="/users/<%=rating.user.id%>"> <%= rating.user.username%></a>
+                <small>
+                  <%= time_ago_in_words(rating.created_at)%> ago  <img height="25" width="125"  src="/assets/images/rating_<%= rating.average_rating.to_i%>.png">
+                </small>
+              </h6>
+              <i class="fa fa-commenting-o"></i> <%= rating.content%>
+            </div>
+          </li>
+
+          <% end %>
+          <% end %>
+          </div>
+          </div>
+          <% rating = Rating.find_by(:service_id => @service.id, :user_id => current_user.id) %>
+          <% if rating.present? %>
+          
+          <div class="col-sm-6">
+          <a href="/ratings/<%=rating.id%>/edit"><button type="button" class="btn btn-warning">Edit your rating</button></a>
+          </div>
+           <br>
+
+          <% else %>
+          <div class="media">
+        <h4> Create a Review </h4>
+            <div class="media-body">
+              <form action="/create_rating" method="post">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+                <input type="hidden" name="service_id" value="<%= @service.id %>">
+
+                <input type="hidden" name="user_id" value="<%= current_user.id %>">
+
+                <!-- Label and input for body -->
+      <div class="form-group">
+              <label for="category" class="control-label">
+                Score
+              </label>
+
+                <select name="average_rating" id="average_rating" class="form-control" placeholder="Select a rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                
+                  </select>
+              </div>
+
+
+                <div class="form-group">
+                  <label for="content" class="sr-only">
+                    Content
+                  </label>
+
+                  <input type="text" id="content" name="content" placeholder="Add a review..." class="form-control" required>
+                </div>
+                      <button class="btn btn-success">
+                         Submit Review
+                        </button>
+                        or
+                        <a href="/services">Cancel</a>
+
+              </form>
+            </div>
+          </li>
+          <%end%>
+          </ul>
+                

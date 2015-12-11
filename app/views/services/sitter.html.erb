@@ -1,0 +1,317 @@
+ <style>
+
+ .starrating{ background-image: url("/assets/images/Star.ico"); 
+              background-position: left bottom;
+            background-size: 25%  ;
+            background-repeat: no-repeat;
+                        padding-left: 12px ;
+            padding-top: 60px;
+            padding-bottom: 5px;
+            font-weight: bold;
+            font-size: 15px; 
+
+  }
+
+
+hr.style3 {
+  border-top: 1px dashed #8c8b8b;
+}
+
+
+ </style>
+
+
+ <div class="row">
+  <div class="col-md-12" >
+    <a href="/services/new" class="btn btn-default btn-block">
+      <i class="fa fa-plus"></i>
+    </a>
+
+    <hr>
+  </div>
+</div>
+
+<div class="container">
+    <div class="row">
+
+
+    
+        <div class="col-sm-offset-0 col-sm-6">
+        <% @services.each do |service| %>
+
+<% @sum_of_ratings = Rating.where(:service_id => service.id ).pluck(:average_rating).sum %>
+<%  @count_of_ratings = Rating.where(:service_id => service.id ).pluck(:average_rating).count %>
+<% if @service_review = Rating.where(:service_id => service.id ).first.present? %>
+<% @service_review = Rating.where(:service_id => service.id ).first %>
+<% @comment_user = (User.find_by id:@service_review.user_id).avatar_url%>
+
+<% else %>
+  
+
+<% end %>
+
+
+
+
+
+
+ 
+
+          <div class="row">
+            <div class="col-sm-offset-0 col-sm-4">
+            <a href="/services/<%=service.id%>">
+            <img height="150" width="150" src="<%= service.image %>" class="img-responsive" ></img> </a>
+            </div>
+            <div class="col-sm-offset-0 col-sm-8">
+            <div class="col-sm-offset-0 col-sm-6">
+              <div class="row">
+                <div class="col-sm-offset-0 col-sm-12">
+                 <a href="/services/<%=service.id%>"> 
+                    <%= service.name %> 
+                      </a><br>
+                    <%= service.category %> 
+                </div>
+                <div class="starrating" class="col-sm-offset-0 col-sm-12" >
+                 <%  if @count_of_ratings == 0 %>
+       ??
+
+    <%else%>
+    <%  @avg_rating = @sum_of_ratings / @count_of_ratings %>
+    <%=  @avg = @avg_rating.round(1) %>
+   <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-offset-0 col-sm-6">
+              <div class="row">
+                  <div class="col-sm-offset-0 col-sm-12">
+                  <i class="fa fa-map-pin">  </i> <%= service.address %><br>
+          
+                  </div>
+                  <div class="col-sm-offset-0 col-sm-12">
+                   <i class="fa fa-phone">   </i> <%= service.phone %> 
+                  </div>
+
+
+              </div>
+
+              </div>
+              <div class="row">
+                      <div class="col-sm-offset-0 col-sm-12">
+                          <%= service.description %>   
+                      </div>
+                </div>
+            </div>
+
+        </div>
+                          <div class="row">
+                      <div class="col-sm-offset-0 col-sm-12">
+                          <a href="/services/<%=service.id%>/images" >
+                                    
+                                   <%if service.favorites.find_by(user_id: current_user.id).present?%> <a href="/delete_favorite/<%=service.favorites.find_by(user_id: current_user.id).id%>" class="btn btn-link">
+              <i class="fa fa-heart"></i></a>
+              <a>Click to remove from favorites</a>
+
+            <%else%> <form action="/create_favorite" method="post" class="btn btn-link">
+             
+              <!-- Hidden input for authenticity token to protect from forgery -->
+              <input name="authenticity_token" type="hidden" value="zRlazHt8GN+4A38PT4aD0tFfbVBcfEuUiGU0xZT8I5/LDLwN9u8kA8VE62x9iLHnyzBV82TxpMM0yx/fVyB6SQ==">
+
+              <input type="hidden" name="service_id" value="<%=service.id%>">
+
+              <input type="hidden" name="user_id" value="<%=current_user.id%>">
+
+              <button class="btn btn-link">
+                
+             <i class="fa fa-heart-o"></i> 
+
+              </button>
+
+              </form>
+              <a>Click the heart add this service to favorites</a>
+
+
+              <% end %>
+
+
+
+                          </a>
+                      </div>
+                      </div>
+
+        <%  if @count_of_ratings == 0 %>
+                         <div class="row">
+                      <div class="col-sm-offset-0 col-sm-12">
+                         <hr class="style3">
+                      </div>
+                      
+                  </div>
+                  <div class="row">
+                      <div class="col-sm-offset-0 col-sm-2">
+                          
+                      </div>
+                      <div class="col-sm-offset-0 col-sm-10">
+                          <i class="fa fa-commenting-o"></i> There is no Reviews yet for this place, try it out and let us know how it was   
+                      </div>
+                  </div>   
+                  <hr>  
+
+    <%else%>
+
+   
+
+                  <div class="row">
+                      <div class="col-sm-offset-0 col-sm-12">
+                         <hr class="style3">
+                      </div>
+                      
+                  </div>
+                  <div class="row">
+                      <div class="col-sm-offset-0 col-sm-1">
+                          <img height="20" width="20"  src=<%= @comment_user %>  ></a>
+                      </div>
+                      <div class="col-sm-offset-0 col-sm-11">
+                          <i class="fa fa-commenting-o"></i> <%= @service_review.content %> 
+                      </div>
+                  </div>   
+                  <hr>   
+  <% end %>            
+ <% end %>
+        </div>
+
+       
+
+
+
+
+        <div class="col-sm-6">
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+var markers = [
+
+<% @services.each do |service| %>
+<% url_safe_street_address = URI.encode(service.address) %>
+<% url = "http://maps.googleapis.com/maps/api/geocode/json?address="+url_safe_street_address %>
+<% parsed_data = JSON.parse(open(url).read) %>
+<% @latitude = parsed_data["results"][0]["geometry"]["location"]["lat"] %>
+<% @longitude = parsed_data["results"][0]["geometry"]["location"]["lng"] %>
+
+
+
+    {
+        "title": '<%= service.name %> ',
+        "lat": '<%= @latitude %>',
+        "lng": '<%= @longitude %>',
+        "description": '<a href="/services/<%=service.id%>">  <%= service.name %> </a> <br> <i class="fa fa-map-pin">  </i>  <%= service.address %> <br> <i class="fa fa-phone">   </i>  <%= service.phone %>',
+        "type": '<%= service.category %>'
+    },
+       <% end %> 
+    ];
+window.onload = function () {
+ 
+    var mapOptions = {
+        center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
+        zoom: 8,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var infoWindow = new google.maps.InfoWindow();
+    var latlngbounds = new google.maps.LatLngBounds();
+    var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+    var i = 0;
+    var interval = setInterval(function () {
+        var data = markers[i]
+        var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+        var icon = "";
+        switch (data.type) {
+            case "Veterinary":
+                icon = "red";
+                break;
+            case "Grooming Services":
+                icon = "blue";
+                break;
+            case "Pet Stores":
+                icon = "yellow";
+                break;
+            case "Pet Sitter/Walker":
+                icon = "green";
+                break;
+            case "Pet Shelters":
+                icon = "orange";
+                break;
+            case "Pet Hotels":
+                icon = "purple";
+                break;
+            case "Pet Trainers":
+                icon = "pink";
+                break;
+        }
+        icon = "http://maps.google.com/mapfiles/ms/icons/" + icon + ".png";
+        var marker = new google.maps.Marker({
+            position: myLatlng,
+            map: map,
+            title: data.title,
+            animation: google.maps.Animation.DROP,
+            icon: new google.maps.MarkerImage(icon)
+        });
+        (function (marker, data) {
+            google.maps.event.addListener(marker, "click", function (e) {
+                infoWindow.setContent(data.description);
+                infoWindow.open(map, marker);
+            });
+        })(marker, data);
+        latlngbounds.extend(marker.position);
+        i++;
+        if (i == markers.length) {
+            clearInterval(interval);
+            var bounds = new google.maps.LatLngBounds();
+            map.setCenter(latlngbounds.getCenter());
+            map.fitBounds(latlngbounds);
+        }
+    }, 80);
+}
+</script>
+
+
+<table>
+<tr>
+    <td>
+        <div id="dvMap" style="width: 500px; height: 400px">
+        </div>
+    </td>
+<div class="row">
+                      <div class="col-sm-offset-0 col-sm-1">
+                          </a>
+                      
+    <td >
+
+
+    </td>
+    </div>
+</tr>
+</table>
+        <u>Legend:</u><br />
+        <img alt="" src="http://maps.google.com/mapfiles/ms/icons/red.png" />
+        Veterinary<br />
+        <img alt="" src="http://maps.google.com/mapfiles/ms/icons/blue.png" />
+        Grooming Services<br />
+        <img alt="" src="http://maps.google.com/mapfiles/ms/icons/yellow.png" />
+        Pet Stores<br />
+        <img alt="" src="http://maps.google.com/mapfiles/ms/icons/green.png" />
+        Pet Sitter/ Walker<br />
+        <img alt="" src="http://maps.google.com/mapfiles/ms/icons/orange.png" />
+        Pet Shelter<br />
+        <img alt="" src="http://maps.google.com/mapfiles/ms/icons/purple.png" />
+        Pet Hotel<br />
+        <img alt="" src="http://maps.google.com/mapfiles/ms/icons/pink.png" />
+        Pet Trainers<br />
+</div>
+
+    </div>
+</div>
+</div>
+
+
+ 
+</body>
+</html>
